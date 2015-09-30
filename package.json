@@ -7,6 +7,10 @@
     "start": "node server.js",
     "test": "mocha --reporter spec test"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aofry/msTemplate.git"
+  },
   "keywords": [
     "micro-service",
     "nodejs",
