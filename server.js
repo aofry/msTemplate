@@ -1,36 +1,44 @@
 var express = require('express');
-var mysql = require('mysql');
-var dbconfig = require('opsworks'); //[1] Include database connection data
+var pg = require('pg');
 var app = express();
 var outputString = "";
 
 app.engine('html', require('ejs').renderFile);
 
 //[2] Get database connection data
-app.locals.hostname = dbconfig.db['host'];
-app.locals.username = dbconfig.db['username'];
-app.locals.password = dbconfig.db['password'];
-app.locals.port = dbconfig.db['port'];
-app.locals.database = dbconfig.db['database'];
-app.locals.connectionerror = 'successful';
-app.locals.DB_URL = process.env.SOME_VAL;
+app.locals.connectionerror = 'not_opened';
+app.locals.DB_URL = process.env.DB_URL;
 app.locals.databases = '';
 
 //[3] Connect to the Amazon RDS instance
-var connection = mysql.createConnection({
-    host: dbconfig.db['host'],
-    user: dbconfig.db['username'],
-    password: dbconfig.db['password'],
-    port: dbconfig.db['port'],
-    database: dbconfig.db['database']
-});
 
+pg.connect(app.locals.DB_URL, function(err, client, done) {
+    if(err) {
+        app.locals.connectionerror = err.stack;
+        return console.error('error fetching client from pool', err);
+    }
+    app.locals.connectionerror = 'successful';
+
+    client.query('SELECT $1::int AS number', ['1'], function(err, result) {
+        //call `done()` to release the client back to the pool
+        done();
+
+        if(err) {
+            return console.error('error running query', err);
+        }
+        app.locals.databases = result.rows[0].number + "";
+        console.log(result.rows[0].number);
+        //output: 1
+    });
+});
+/*
 connection.connect(function(err)
 {
     if (err) {
         app.locals.connectionerror = err.stack;
         return;
     }
+    app.locals.connectionerror = 'successful';
 });
 
 // [4] Query the database
@@ -48,7 +56,7 @@ connection.query('SHOW DATABASES', function (err, results) {
 });
 
 connection.end();
-
+ */
 app.get('/', function(req, res) {
     res.render('./index.html');
 });
