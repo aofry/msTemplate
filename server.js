@@ -1,22 +1,23 @@
 var express = require('express');
 var mysql = require('mysql');
-var dbconfig = require('opsworks'); //[1] Include database connection data
+//var dbconfig = require('opsworks'); //[1] Include database connection data
 var app = express();
 var outputString = "";
 
 app.engine('html', require('ejs').renderFile);
 
 //[2] Get database connection data
-app.locals.hostname = dbconfig.db['host'];
-app.locals.username = dbconfig.db['username'];
-app.locals.password = dbconfig.db['password'];
-app.locals.port = dbconfig.db['port'];
-app.locals.database = dbconfig.db['database'];
-app.locals.connectionerror = 'successful';
-app.locals.DB_URL = process.env.SOME_VAL;
+//app.locals.hostname = dbconfig.db['host'];
+//app.locals.username = dbconfig.db['username'];
+//app.locals.password = dbconfig.db['password'];
+//app.locals.port = dbconfig.db['port'];
+//app.locals.database = dbconfig.db['database'];
+app.locals.connectionerror = 'idle';
+app.locals.DB_URL = process.env.DB_URL;
 app.locals.databases = '';
 
 //[3] Connect to the Amazon RDS instance
+/*
 var connection = mysql.createConnection({
     host: dbconfig.db['host'],
     user: dbconfig.db['username'],
@@ -24,6 +25,10 @@ var connection = mysql.createConnection({
     port: dbconfig.db['port'],
     database: dbconfig.db['database']
 });
+*/
+
+
+var connection = mysql.createConnection(app.locals.DB_URL);
 
 connection.connect(function(err)
 {
@@ -31,6 +36,7 @@ connection.connect(function(err)
         app.locals.connectionerror = err.stack;
         return;
     }
+    app.locals.connectionerror = 'connected';
 });
 
 // [4] Query the database
