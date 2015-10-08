@@ -12,9 +12,11 @@ var dbhost = process.env.RDS_HOSTNAME,
 
 //[2] Get database connection data
 app.locals.connectionerror = 'not_opened';
+// my injection style on OpsWorks manually
 app.locals.DB_URL = process.env.DB_URL;
 app.locals.databases = '';
 
+//Elastic Beanstalk type of env injection:
 if (dbhost != null) {
     //postgres://postgres:postgres2@localhost:5433/editorial
     app.locals.DB_URL = 'postgres://' + dbuser + ':' + dbpassword + '@' + dbhost + ':' + dbport + '/postgres';
