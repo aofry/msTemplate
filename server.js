@@ -4,15 +4,26 @@ var pg = require('pg');
 var app = express();
 var outputString = "";
 
-//app.engine('html', require('ejs').renderFile);
+app.engine('html', require('ejs').renderFile);
+var dbhost = process.env.RDS_HOSTNAME,
+    dbuser = process.env.RDS_USERNAME,
+    dbpassword = process.env.RDS_PASSWORD,
+    dbport = process.env.RDS_PORT;
 
 //[2] Get database connection data
 app.locals.connectionerror = 'not_opened';
 app.locals.DB_URL = process.env.DB_URL;
 app.locals.databases = '';
 
+if (dbhost != null) {
+    //postgres://postgres:postgres2@localhost:5433/editorial
+    app.locals.DB_URL = 'postgres://' + dbuser + ':' + dbpassword + '@' + dbhost + ':' + dbport + '/postgres';
+}
+
+console.log('db_url is: ' + app.locals.DB_URL);
+
 //[3] Connect to the Amazon RDS instance
-/*
+
 pg.connect(app.locals.DB_URL, function(err, client, done) {
     if(err) {
         app.locals.connectionerror = err.stack;
@@ -58,7 +69,7 @@ connection.query('SHOW DATABASES', function (err, results) {
 
 connection.end();
  */
-/*
+
 app.get('/', function(req, res) {
     res.render('./index.html');
 });
@@ -67,12 +78,12 @@ app.use(express.static('public'));
 
 //[5] Listen for incoming requests
 app.listen(process.env.PORT || 3000);
-*/
+/*
 http.createServer(function(request, response) {
     response.writeHead(200, {"Content-Type": "text/plain"});
     response.write("Hello World");
     response.end();
     console.log('adi got request');
 }).listen(process.env.PORT || 8888);
-
+*/
 console.log('adi server started on port: ' + (process.env.PORT || 8888));
