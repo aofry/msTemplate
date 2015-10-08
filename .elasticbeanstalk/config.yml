@@ -1,0 +1,10 @@
+branch-defaults:
+  master:
+    environment: aofry-eb-staging
+global:
+  application_name: msTemplate
+  default_ec2_keyname: adi
+  default_platform: Node.js
+  default_region: us-west-2
+  profile: null
+  sc: git
