@@ -72,4 +72,7 @@ http.createServer(function(request, response) {
     response.writeHead(200, {"Content-Type": "text/plain"});
     response.write("Hello World");
     response.end();
+    console.log('adi got request');
 }).listen(process.env.PORT || 8888);
+
+console.log('adi server started on port: ' + (process.env.PORT || 8888));
