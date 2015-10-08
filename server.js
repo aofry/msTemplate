@@ -1,9 +1,10 @@
+var http = require("http");
 var express = require('express');
 var pg = require('pg');
 var app = express();
 var outputString = "";
 
-app.engine('html', require('ejs').renderFile);
+//app.engine('html', require('ejs').renderFile);
 
 //[2] Get database connection data
 app.locals.connectionerror = 'not_opened';
@@ -11,7 +12,7 @@ app.locals.DB_URL = process.env.DB_URL;
 app.locals.databases = '';
 
 //[3] Connect to the Amazon RDS instance
-
+/*
 pg.connect(app.locals.DB_URL, function(err, client, done) {
     if(err) {
         app.locals.connectionerror = err.stack;
@@ -57,6 +58,7 @@ connection.query('SHOW DATABASES', function (err, results) {
 
 connection.end();
  */
+/*
 app.get('/', function(req, res) {
     res.render('./index.html');
 });
@@ -64,4 +66,10 @@ app.get('/', function(req, res) {
 app.use(express.static('public'));
 
 //[5] Listen for incoming requests
-app.listen(process.env.PORT);
+app.listen(process.env.PORT || 3000);
+*/
+http.createServer(function(request, response) {
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.write("Hello World");
+    response.end();
+}).listen(process.env.PORT || 8888);
